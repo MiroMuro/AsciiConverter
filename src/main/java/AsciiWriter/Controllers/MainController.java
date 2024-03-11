@@ -35,9 +35,7 @@ public class MainController {
 	@FXML
 	public void loadExamplePhoto(ActionEvent event) {
 		BufferedImage img = Writer.loadDefaultImage();
-		System.out.println(img.toString() + "image loaded");
 		Image image = SwingFXUtils.toFXImage(img, null);
-		System.out.println(img.toString());
 		myImage.setImage(image);
 		currentImage = myImage.getImage();
 	}
@@ -106,10 +104,22 @@ public class MainController {
 
 	@FXML
 	public void convertImageToMonohrome(ActionEvent event) {
-		System.out.println(currentImage.getPixelReader());
+		// Convert the current image to BufferedImage and then to monochrome.
+		// Then convert the monochrome bufferedImage back to an image and set it to the
+		// image view.
 		BufferedImage img = Writer.convertImageToMonochrome(SwingFXUtils.fromFXImage(currentImage, null));
 		myImage.setImage(SwingFXUtils.toFXImage(img, null));
-		currentImage = myImage.getImage();
+		System.out.println("Image converted to monochrome." + currentImage.toString());
+	}
+
+	@FXML
+	public void convertImageToGrayScale(ActionEvent event) {
+		// Convert the current image to BufferedImage and then to grayscale.
+		BufferedImage img = Writer.transferImageToGreyScale(SwingFXUtils.fromFXImage(currentImage, null));
+		// Then convert the grayscale bufferedImage back to an image and set it to the
+		// image view.
+		myImage.setImage(SwingFXUtils.toFXImage(img, null));
+		System.out.println("Image converted to grayscale." + currentImage.toString());
 	}
 
 };

@@ -45,7 +45,6 @@ public class Writer {
 
 			// Create a new buffered image with scaled dimensions.
 			BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, type);
-			System.out.println(resizedImage.toString() + "image loaded");
 			// Create a graphics2D object from the resized image and draw the original image
 			// to it.
 			Graphics2D g = resizedImage.createGraphics();
@@ -145,15 +144,7 @@ public class Writer {
 
 	public static BufferedImage convertImageToMonochrome(BufferedImage image) {
 		// Loop through all the pixels in the image and convert them to monochrome.
-		// Wait for the thread to sleep for 1 second to allow the program to paint
-		// the grayscale image before converting it to monochrome.
-		try {
-			Thread.currentThread();
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 		for (int y = 0; y < image.getHeight(); y++) {
 			for (int x = 0; x < image.getWidth(); x++) {
 				Color colorAtPixel = new Color(image.getRGB(x, y), true);

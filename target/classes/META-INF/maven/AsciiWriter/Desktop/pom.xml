@@ -1,0 +1,80 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>AsciiWriter</groupId>
+    <artifactId>Desktop</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>21</version>
+        </dependency>
+        <dependency>
+    <groupId>de.mirkosertic.bytecoder</groupId>
+    <artifactId>java.desktop</artifactId>
+    <version>2023-12-01</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+	<groupId>org.openjfx</groupId>
+	<artifactId>javafx-fxml</artifactId>
+	<version>17.0.11-ea+2</version>
+</dependency>
+<!-- Thanks for using https://jar-download.com -->
+<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-swing -->
+<dependency>
+    <groupId>org.openjfx</groupId>
+    <artifactId>javafx-swing</artifactId>
+    <version>11-ea+24</version>
+</dependency>
+    </dependencies>
+    <build>
+		   <resources>
+     <resource>
+       <directory>src/main/resources</directory>
+     </resource>
+   </resources>
+		
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+					<source>${java.version}</source>
+                    <target>${java.version}</target>
+
+                    <!-- JDK9+ Add Module MAGIC happens below...          -->
+                    <!-- Add implicit default JDK9+ java.se explicitly    -->
+                    <!-- Add explicit java.desktop for import java.awt.*; -->
+                    <compilerArgs>
+                        <arg>--add-modules</arg>
+                        <arg>java.se,java.desktop</arg>
+                    </compilerArgs>
+                    <release>11</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.6</version>
+                <executions>
+                    <execution>
+                        <!-- Default configuration for running -->
+                        <!-- Usage: mvn clean javafx:run -->
+                        <id>default-cli</id>
+                        <configuration>
+                            <mainClass>AsciiWriter.Desktop.App</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

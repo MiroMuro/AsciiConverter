@@ -236,7 +236,7 @@ public class Writer {
 		// Control the density of ascii characters printed to the console.
 		// Denser prints will result in a more detailed image. But will take longer to
 		// print and consume more space in the console.
-		int density = 5;
+		int density = 7;
 		for (int y = 0; y < image.getHeight(); y += density) {
 			System.out.println("\n");
 			for (int x = 0; x < image.getWidth(); x += density) {

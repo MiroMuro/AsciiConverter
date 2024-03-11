@@ -41,6 +41,16 @@ public class MainController {
 	}
 
 	@FXML
+	public void loadUneditedPhoto(ActionEvent event) {
+		if (currentImage != null) {
+			myImage.setImage(currentImage);
+		} else {
+			myMessage.setText("Error. No original image loaded.");
+		}
+
+	}
+
+	@FXML
 	public void singleFileChooser(ActionEvent event) {
 		FileChooser fc = new FileChooser();
 		// Filter accepted image formats.
@@ -82,6 +92,7 @@ public class MainController {
 				if (newFile.exists()) {
 					myImage.setImage(new Image(newFile.toURI().toString()));
 					currentImage = myImage.getImage();
+					System.out.println("Curent image set to: " + currentImage.toString());
 				} else {
 					System.out.println("File does not exist: " + newFile.getAbsolutePath());
 				}
@@ -107,19 +118,40 @@ public class MainController {
 		// Convert the current image to BufferedImage and then to monochrome.
 		// Then convert the monochrome bufferedImage back to an image and set it to the
 		// image view.
-		BufferedImage img = Writer.convertImageToMonochrome(SwingFXUtils.fromFXImage(currentImage, null));
-		myImage.setImage(SwingFXUtils.toFXImage(img, null));
-		System.out.println("Image converted to monochrome." + currentImage.toString());
+		if (currentImage == null) {
+			myMessage.setText("Error. No image loaded.");
+		} else {
+			BufferedImage img = Writer.convertImageToMonochrome(SwingFXUtils.fromFXImage(currentImage, null));
+			myImage.setImage(SwingFXUtils.toFXImage(img, null));
+			System.out.println("Image converted to monochrome." + currentImage.toString());
+		}
+
 	}
 
 	@FXML
 	public void convertImageToGrayScale(ActionEvent event) {
+		if (currentImage == null) {
+			myMessage.setText("Error. No image loaded.");
+		} else {
+			BufferedImage img = Writer.transferImageToGreyScale(SwingFXUtils.fromFXImage(currentImage, null));
+			// Then convert the grayscale bufferedImage back to an image and set it to the
+			// image view.
+			myImage.setImage(SwingFXUtils.toFXImage(img, null));
+			System.out.println("Image converted to grayscale." + currentImage.toString());
+		}
 		// Convert the current image to BufferedImage and then to grayscale.
-		BufferedImage img = Writer.transferImageToGreyScale(SwingFXUtils.fromFXImage(currentImage, null));
-		// Then convert the grayscale bufferedImage back to an image and set it to the
-		// image view.
-		myImage.setImage(SwingFXUtils.toFXImage(img, null));
-		System.out.println("Image converted to grayscale." + currentImage.toString());
+
 	}
+
+	@FXML
+	public void printImageAsAsciiToConsole(ActionEvent event) {
+		if (currentImage == null) {
+			myMessage.setText("Error. No image loaded.");
+		} else {
+			BufferedImage image = SwingFXUtils.fromFXImage(currentImage, null);
+			Writer.writeAsciiImageToConsole(image);
+		}
+	}
+
 
 };

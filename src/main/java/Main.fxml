@@ -5,16 +5,15 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="755.0" prefWidth="622.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AsciiWriter.Controllers.MainController">
+<AnchorPane prefHeight="783.0" prefWidth="988.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AsciiWriter.Controllers.MainController">
    <children>
-      <Button layoutX="90.0" layoutY="118.0" mnemonicParsing="false" onAction="#generateAsciiTextFile" prefHeight="25.0" prefWidth="151.0" text="Print ascii to console" />
+      <Button layoutX="90.0" layoutY="118.0" mnemonicParsing="false" onAction="#loadExamplePhoto" prefHeight="25.0" prefWidth="151.0" text="Load an example photo" />
       <Button layoutX="98.0" layoutY="82.0" mnemonicParsing="false" text="Show grayscale image" />
-      <Button layoutX="110.0" layoutY="156.0" mnemonicParsing="false" text="Show b&amp;w image" />
+      <Button layoutX="110.0" layoutY="156.0" mnemonicParsing="false" onAction="#convertImageToMonohrome" text="Show b&amp;w image" />
       <Button layoutX="105.0" layoutY="203.0" mnemonicParsing="false" text="Print ascii to .txt file" />
       <Button layoutX="140.0" layoutY="45.0" mnemonicParsing="false" onAction="#generateRandom" text="RNG" />
       <Label fx:id="myMessage" layoutX="119.0" layoutY="14.0" prefHeight="25.0" prefWidth="103.0" />
-      <ImageView fx:id="myImage" fitHeight="496.0" fitWidth="301.0" layoutX="293.0" layoutY="73.0" pickOnBounds="true" preserveRatio="true" />
-      <Button layoutX="105.0" layoutY="247.0" mnemonicParsing="false" onAction="#singleFileChooser" text="Choose image file" />
-      <Label fx:id="singleFileLabel" layoutX="84.0" layoutY="625.0" prefHeight="68.0" prefWidth="430.0" text="Label" />
+      <ImageView fx:id="myImage" fitHeight="496.0" fitWidth="673.0" layoutX="276.0" layoutY="107.0" pickOnBounds="true" preserveRatio="true" />
+      <Button layoutX="115.0" layoutY="255.0" mnemonicParsing="false" onAction="#singleFileChooser" text="Choose image file" />
    </children>
 </AnchorPane>

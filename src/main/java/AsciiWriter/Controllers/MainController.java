@@ -18,11 +18,11 @@ import javafx.stage.FileChooser.ExtensionFilter;
 
 public class MainController {
 	@FXML
-	private Label singleFileLabel;
-	@FXML
 	private Label myMessage;
 	@FXML
 	private ImageView myImage;
+	@FXML
+	private Image currentImage;
 
 	@FXML
 	public void generateRandom(ActionEvent event) {
@@ -33,11 +33,13 @@ public class MainController {
 	}
 
 	@FXML
-	public void generateAsciiTextFile(ActionEvent event) {
-		BufferedImage img = Writer.loadImage();
+	public void loadExamplePhoto(ActionEvent event) {
+		BufferedImage img = Writer.loadDefaultImage();
+		System.out.println(img.toString() + "image loaded");
 		Image image = SwingFXUtils.toFXImage(img, null);
 		System.out.println(img.toString());
 		myImage.setImage(image);
+		currentImage = myImage.getImage();
 	}
 
 	@FXML
@@ -49,7 +51,6 @@ public class MainController {
 		File file = fc.showOpenDialog(null);
 		// If a file is seleted, copy it to the resources folder.
 		if (file != null) {
-			singleFileLabel.setText(file.getAbsolutePath());
 			try {
 				// Define the destination directory
 				File destDir = new File("src/main/resources/images");
@@ -77,13 +78,38 @@ public class MainController {
 
 				fis.close();
 				fos.close();
-
 				System.out.println("File copied to: " + destinationFilePath);
+
+				File newFile = new File(destinationFilePath);
+				if (newFile.exists()) {
+					myImage.setImage(new Image(newFile.toURI().toString()));
+					currentImage = myImage.getImage();
+				} else {
+					System.out.println("File does not exist: " + newFile.getAbsolutePath());
+				}
+				// Find the file and open it.
+				/*
+				 * if (!Desktop.isDesktopSupported()) {
+				 * System.out.println("Desktop is not supported"); } else { Desktop desktop =
+				 * Desktop.getDesktop();
+				 *
+				 *
+				 * }
+				 */
+
 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@FXML
+	public void convertImageToMonohrome(ActionEvent event) {
+		System.out.println(currentImage.getPixelReader());
+		BufferedImage img = Writer.convertImageToMonochrome(SwingFXUtils.fromFXImage(currentImage, null));
+		myImage.setImage(SwingFXUtils.toFXImage(img, null));
+		currentImage = myImage.getImage();
 	}
 
 };

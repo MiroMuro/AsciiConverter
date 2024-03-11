@@ -18,23 +18,34 @@ public class Writer {
 	// The threshold value for a pixel to be considered white or black.
 	public final static int THRESHOLD = 280;
 
-	public static BufferedImage loadImage() {
+	public static BufferedImage loadDefaultImage() {
 		try {
-
+			int newWidth;
+			int newHeight;
 			// Read the image from the file.
 			BufferedImage originalImage = ImageIO.read(Writer.class.getResource("/monalisa.jpg"));
-			// BufferedImage originalImage =
-			// ImageIO.read(Main.class.getResource("src/app/monalisa.jpg"));
 			int width = originalImage.getWidth();
 			int height = originalImage.getHeight();
-			// Calculate the ratio of the image and scale it down a bit
+			// Calculate the ratio of the image.
 			double ratio = (double) width / height;
-			int newWidth = (int) (width * (1 - ratio));
-			int newHeight = (int) (height * (1 - ratio));
+			// If the width is greater than the height, scale the width down.
+			// For landscape photos.
+			if (ratio > 1.0) {
+				newWidth = (int) (width * (ratio - 1));
+				newHeight = (int) (height * (ratio - 1));
+			} else {
+				// If the height is greater than the width, scale the height down.
+				// For portrait photos.
+				newWidth = (int) (width * (1 - ratio));
+				newHeight = (int) (height * (1 - ratio));
+			}
+
+
 			int type = originalImage.getType();
 
 			// Create a new buffered image with scaled dimensions.
 			BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, type);
+			System.out.println(resizedImage.toString() + "image loaded");
 			// Create a graphics2D object from the resized image and draw the original image
 			// to it.
 			Graphics2D g = resizedImage.createGraphics();
@@ -60,6 +71,7 @@ public class Writer {
 		return null;
 
 	}
+
 
 	public static void main(String[] args) {
 

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
 import java.util.Optional;
 
 import javax.imageio.ImageIO;
@@ -105,9 +106,9 @@ public class Writer {
 			// is the same image the whole time. The ascii write methods
 			// will modify the colored image for best results.
 			// Write the image to the console.
-			writeAsciiImageToConsole(resizedImage);
+			writeAsciiImageToConsole(resizedImage, 1, 1);
 			// Write the image to a text file and open it.
-			writeAsciiImageToFile(resizedImage);
+			writeAsciiImageToFile(resizedImage, 1, 1);
 
 			// Display the image in greyscale.
 			createImage(transferImageToGreyScale(resizedImage));
@@ -184,7 +185,7 @@ public class Writer {
 		frame.setVisible(true);
 	};
 
-	public static void writeAsciiImageToFile(BufferedImage image) {
+	public static void writeAsciiImageToFile(BufferedImage image, int verticalDensity, int horizontalDensity) {
 		try {
 			// Instantiate a new file object and a file writer object.
 			File file = new File("src/main/resources/myFile.txt");
@@ -195,12 +196,12 @@ public class Writer {
 			// Denser prints will result in a more detailed and larger image, but the file
 			// will take up more memory. e.g, per how many pixels to print a character.
 
-			int densityOfRow = 10;
-			int density = 6;
-			for (int y = 0; y < image.getHeight(); y += densityOfRow) {
+			// int densityOfRow = 60;
+			// int density = 60;
+			for (int y = 0; y < image.getHeight(); y += verticalDensity) {
 				// Create a new line for each row of pixels.
 				myWriter.write("\n");
-				for (int x = 0; x < image.getWidth(); x += density) {
+				for (int x = 0; x < image.getWidth(); x += horizontalDensity) {
 					Color pixelColor = new Color(image.getRGB(x, y), true);
 					// Create a grayscale pixel using the luminosity method described here:
 					// http://www.johndcook.com/blog/2009/08/24/algorithms-convert-color-grayscale/
@@ -222,10 +223,14 @@ public class Writer {
 			Desktop desktop = Desktop.getDesktop();
 
 			if (file.exists()) {
+				double bytes = Files.size(file.toPath());
+				DecimalFormat f = new DecimalFormat("##.00");
 				Alert alert = new Alert(AlertType.CONFIRMATION);
 				alert.setTitle("File created");
 				alert.setHeaderText("An ASCII file was created at " + file.getAbsolutePath());
-				alert.setContentText("Do you want to open the file?");
+				alert.setContentText("Do you want to open the file? \n\n" + "ASCII file size in bytes: " + bytes
+						+ " B \n" + "ASCII file size in kilobytes: " + f.format(bytes / 1024) + " KB \n"
+						+ "ASCII file size in megabytes: " + f.format(bytes / 1024 / 1024) + " MB \n");
 
 				Optional<ButtonType> result = alert.showAndWait();
 				if (result.get() == ButtonType.OK) {
@@ -234,26 +239,27 @@ public class Writer {
 					System.out.println("User cancelled the operation.");
 				}
 
-				double bytes = Files.size(file.toPath());
-				// System.out.println("File size in megabytesbytes: " + file.getTotalSpace());
-				// System.out.println(Files.size(file.toPath()) + " bytes");
-				System.out.println(String.format("ASCII file size in bytes: %f ", bytes));
-				System.out.println(String.format("ASCII file size in kilobytes: %f", bytes / 1024));
-				System.out.println(String.format("ASCII file size in megabytes: %f", bytes / 1024 / 1024));
+				/*
+				 * System.out.println("File size in megabytesbytes: " + file.getTotalSpace());
+				 * System.out.println(Files.size(file.toPath()) + " bytes");
+				 * System.out.println(String.format("ASCII file size in bytes: %f ", bytes));
+				 * System.out.println(String.format("ASCII file size in kilobytes: %f", bytes /
+				 * 1024)); System.out.println(String.format("ASCII file size in megabytes: %f",
+				 * bytes / 1024 / 1024));
+				 */
 			}
 		} catch (IOException e) {
 			System.out.println("Error: " + e.getMessage());
 		}
 	}
 
-	public static void writeAsciiImageToConsole(BufferedImage image) {
+	public static void writeAsciiImageToConsole(BufferedImage image, int verticalDensity, int horizontalDensity) {
 		// Control the density of ascii characters printed to the console.
 		// Denser prints will result in a more detailed image. But will take longer to
 		// print and consume more space in the console.
-		int density = 7;
-		for (int y = 0; y < image.getHeight(); y += density) {
+		for (int y = 0; y < image.getHeight(); y += verticalDensity) {
 			System.out.println("\n");
-			for (int x = 0; x < image.getWidth(); x += density) {
+			for (int x = 0; x < image.getWidth(); x += horizontalDensity) {
 				Color pixelColor = new Color(image.getRGB(x, y), true);
 				// Create a grayscale pixel using the luminosity method described here:
 				// http://www.johndcook.com/blog/2009/08/24/algorithms-convert-color-grayscale/
@@ -296,9 +302,9 @@ public class Writer {
 			return '*';
 		}
 		if (luminosityValue >= 0.1) {
-			return '@';
+			return '#';
 		}
-		return '#';
+		return '@';
 	}
 }
 

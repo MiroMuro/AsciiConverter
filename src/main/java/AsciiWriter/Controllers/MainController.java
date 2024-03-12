@@ -11,6 +11,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -23,6 +24,19 @@ public class MainController {
 	private ImageView myImage;
 	@FXML
 	private Image currentImage;
+	@FXML
+	private Slider verticalValueSlider;
+	@FXML
+	private Slider horizontalValueSlider;
+
+	public void initialize() {
+		verticalValueSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			System.out.println("Vertical Slider value changed: " + newValue);
+		});
+		horizontalValueSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			System.out.println("Horizontal Slider value changed: " + newValue);
+		});
+	}
 
 	@FXML
 	public void generateRandom(ActionEvent event) {
@@ -145,11 +159,13 @@ public class MainController {
 
 	@FXML
 	public void printImageAsAsciiToConsole(ActionEvent event) {
+		System.out.println((int) verticalValueSlider.getValue() + " " + (int) horizontalValueSlider.getValue());
 		if (currentImage == null) {
 			myMessage.setText("Error. No image loaded.");
 		} else {
 			BufferedImage image = SwingFXUtils.fromFXImage(currentImage, null);
-			Writer.writeAsciiImageToConsole(image);
+			Writer.writeAsciiImageToConsole(image, (int) verticalValueSlider.getValue(),
+					(int) horizontalValueSlider.getValue());
 		}
 	}
 
@@ -159,8 +175,14 @@ public class MainController {
 			myMessage.setText("Error. No image loaded.");
 		} else {
 			BufferedImage image = SwingFXUtils.fromFXImage(currentImage, null);
-			Writer.writeAsciiImageToFile(image);
+			Writer.writeAsciiImageToFile(image, (int) verticalValueSlider.getValue(),
+					(int) horizontalValueSlider.getValue());
 		}
+	}
+
+	@FXML
+	public void test(ActionEvent event) {
+		System.out.println("Slider value test");
 	}
 
 

@@ -17,7 +17,8 @@
             <Font size="18.0" />
          </font></Label>
       <ImageView fx:id="myImage" fitHeight="496.0" fitWidth="673.0" layoutX="276.0" layoutY="107.0" pickOnBounds="true" preserveRatio="true" />
-      <Button layoutX="116.0" layoutY="380.0" mnemonicParsing="false" onAction="#singleFileChooser" text="Choose image file" />
+      <Button layoutX="116.0" layoutY="401.0" mnemonicParsing="false" onAction="#singleFileChooser" text="Choose image file" />
       <Button layoutX="105.0" layoutY="209.0" mnemonicParsing="false" onAction="#loadUneditedPhoto" text="Show unedited image" />
+      <Button layoutX="103.0" layoutY="367.0" mnemonicParsing="false" onAction="#printImageAsAsciiToFile" text="Print ascii image to file" />
    </children>
 </AnchorPane>

@@ -9,10 +9,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Optional;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 
 public class Writer {
 	// The threshold value for a pixel to be considered white or black.
@@ -184,16 +189,14 @@ public class Writer {
 			// Instantiate a new file object and a file writer object.
 			File file = new File("src/main/resources/myFile.txt");
 			FileWriter myWriter = new FileWriter("src/main/resources/myFile.txt");
-			myWriter.write("This is a test.");
-			myWriter.write("\n");
-			myWriter.write("This is another test.");
+
 
 			// Control the density of ascii characters printed to the text file.
 			// Denser prints will result in a more detailed and larger image, but the file
 			// will take up more memory. e.g, per how many pixels to print a character.
 
-			int densityOfRow = 1;
-			int density = 1;
+			int densityOfRow = 10;
+			int density = 6;
 			for (int y = 0; y < image.getHeight(); y += densityOfRow) {
 				// Create a new line for each row of pixels.
 				myWriter.write("\n");
@@ -219,7 +222,18 @@ public class Writer {
 			Desktop desktop = Desktop.getDesktop();
 
 			if (file.exists()) {
-				desktop.open(file);
+				Alert alert = new Alert(AlertType.CONFIRMATION);
+				alert.setTitle("File created");
+				alert.setHeaderText("An ASCII file was created at " + file.getAbsolutePath());
+				alert.setContentText("Do you want to open the file?");
+
+				Optional<ButtonType> result = alert.showAndWait();
+				if (result.get() == ButtonType.OK) {
+					desktop.open(file);
+				} else {
+					System.out.println("User cancelled the operation.");
+				}
+
 				double bytes = Files.size(file.toPath());
 				// System.out.println("File size in megabytesbytes: " + file.getTotalSpace());
 				// System.out.println(Files.size(file.toPath()) + " bytes");

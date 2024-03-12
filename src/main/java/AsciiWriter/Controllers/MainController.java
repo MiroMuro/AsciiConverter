@@ -153,5 +153,15 @@ public class MainController {
 		}
 	}
 
+	@FXML
+	public void printImageAsAsciiToFile(ActionEvent event) {
+		if (currentImage == null) {
+			myMessage.setText("Error. No image loaded.");
+		} else {
+			BufferedImage image = SwingFXUtils.fromFXImage(currentImage, null);
+			Writer.writeAsciiImageToFile(image);
+		}
+	}
+
 
 };

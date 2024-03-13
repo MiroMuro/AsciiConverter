@@ -25,15 +25,15 @@ public class MainController {
 	@FXML
 	private Image currentImage;
 	@FXML
-	private Slider verticalValueSlider;
+	private Slider verticalDensitySlider;
 	@FXML
-	private Slider horizontalValueSlider;
+	private Slider horizontalDensitySlider;
 
 	public void initialize() {
-		verticalValueSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+		verticalDensitySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 			System.out.println("Vertical Slider value changed: " + newValue);
 		});
-		horizontalValueSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+		horizontalDensitySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 			System.out.println("Horizontal Slider value changed: " + newValue);
 		});
 	}
@@ -90,7 +90,6 @@ public class MainController {
 				// Input and output streams for file copying.
 				FileInputStream fis = new FileInputStream(file);
 				FileOutputStream fos = new FileOutputStream(destinationFilePath);
-				System.out.println("File input stream: " + fis);
 				// Copy the file byte by byte.
 				byte[] buffer = new byte[1024];
 				int length;
@@ -110,15 +109,7 @@ public class MainController {
 				} else {
 					System.out.println("File does not exist: " + newFile.getAbsolutePath());
 				}
-				// Find the file and open it.
-				/*
-				 * if (!Desktop.isDesktopSupported()) {
-				 * System.out.println("Desktop is not supported"); } else { Desktop desktop =
-				 * Desktop.getDesktop();
-				 *
-				 *
-				 * }
-				 */
+
 
 
 			} catch (Exception e) {
@@ -159,13 +150,14 @@ public class MainController {
 
 	@FXML
 	public void printImageAsAsciiToConsole(ActionEvent event) {
-		System.out.println((int) verticalValueSlider.getValue() + " " + (int) horizontalValueSlider.getValue());
 		if (currentImage == null) {
 			myMessage.setText("Error. No image loaded.");
 		} else {
+			// Transfer the current image to a buffered image and then print it to the
+			// console.
 			BufferedImage image = SwingFXUtils.fromFXImage(currentImage, null);
-			Writer.writeAsciiImageToConsole(image, (int) verticalValueSlider.getValue(),
-					(int) horizontalValueSlider.getValue());
+			Writer.writeAsciiImageToConsole(image, (int) verticalDensitySlider.getValue(),
+					(int) horizontalDensitySlider.getValue());
 		}
 	}
 
@@ -174,9 +166,12 @@ public class MainController {
 		if (currentImage == null) {
 			myMessage.setText("Error. No image loaded.");
 		} else {
+			// Transfer the current displayed image to a buffered image and then print it to
+			// the
+			// console.
 			BufferedImage image = SwingFXUtils.fromFXImage(currentImage, null);
-			Writer.writeAsciiImageToFile(image, (int) verticalValueSlider.getValue(),
-					(int) horizontalValueSlider.getValue());
+			Writer.writeAsciiImageToFile(image, (int) verticalDensitySlider.getValue(),
+					(int) horizontalDensitySlider.getValue());
 		}
 	}
 

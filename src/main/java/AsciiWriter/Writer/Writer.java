@@ -2,7 +2,6 @@ package AsciiWriter.Writer;
 
 import java.awt.Color;
 import java.awt.Desktop;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -13,8 +12,6 @@ import java.text.DecimalFormat;
 import java.util.Optional;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -57,18 +54,6 @@ public class Writer {
 			g.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
 			g.dispose();
 
-			// Order is important here because the image being converted
-			// is the same image the whole time. The ascii write methods
-			// will modify the colored image for best results.
-			// Write the image to the console.
-			// writeAsciiImageToConsole(resizedImage);
-			// Write the image to a text file and open it.
-			// writeAsciiImageToFile(resizedImage);
-
-			// Display the image in greyscale.
-			// createImage(transferImageToGreyScale(resizedImage));
-			// Display the image in monochrome.
-			// createImage(convertImageToMonochrome(resizedImage));
 			return resizedImage;
 		} catch (IOException e) {
 			System.out.println("Error: " + e.getMessage());
@@ -78,47 +63,7 @@ public class Writer {
 	}
 
 
-	public static void main(String[] args) {
 
-		try {
-
-			// Read the image from the file.
-			BufferedImage originalImage = ImageIO.read(Writer.class.getResource("/monalisa.jpg"));
-			// BufferedImage originalImage =
-			// ImageIO.read(Main.class.getResource("src/app/monalisa.jpg"));
-			int width = originalImage.getWidth();
-			int height = originalImage.getHeight();
-			// Calculate the ratio of the image and scale it down a bit
-			double ratio = (double) width / height;
-			int newWidth = (int) (width * (1 - ratio));
-			int newHeight = (int) (height * (1 - ratio));
-			int type = originalImage.getType();
-
-			// Create a new buffered image with scaled dimensions.
-			BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, type);
-			// Create a graphics2D object from the resized image and draw the original image
-			// to it.
-			Graphics2D g = resizedImage.createGraphics();
-			g.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
-			g.dispose();
-
-			// Order is important here because the image being converted
-			// is the same image the whole time. The ascii write methods
-			// will modify the colored image for best results.
-			// Write the image to the console.
-			writeAsciiImageToConsole(resizedImage, 1, 1);
-			// Write the image to a text file and open it.
-			writeAsciiImageToFile(resizedImage, 1, 1);
-
-			// Display the image in greyscale.
-			createImage(transferImageToGreyScale(resizedImage));
-			// Display the image in monochrome.
-			createImage(convertImageToMonochrome(resizedImage));
-
-		} catch (IOException e) {
-			System.out.println("Error: " + e.getMessage());
-		}
-	};
 
 
 	public static BufferedImage transferImageToGreyScale(BufferedImage image) {
@@ -167,37 +112,16 @@ public class Writer {
 		return image;
 	}
 
-	public static void createImage(BufferedImage image) {
-		// Create a new frame and panel to display the image.
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		JPanel panel = new JPanel() {
-			@Override
-			// Paint the image to the panel.
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				g.drawImage(image, 0, 0, null);
-			}
-		};
-		// Add the panel to the frame.
-		frame.add(panel);
-		frame.setSize(image.getWidth(), image.getHeight());
-		frame.setVisible(true);
-	};
+
 
 	public static void writeAsciiImageToFile(BufferedImage image, int verticalDensity, int horizontalDensity) {
 		try {
 			// Instantiate a new file object and a file writer object.
 			File file = new File("src/main/resources/myFile.txt");
 			FileWriter myWriter = new FileWriter("src/main/resources/myFile.txt");
-
-
-			// Control the density of ascii characters printed to the text file.
-			// Denser prints will result in a more detailed and larger image, but the file
-			// will take up more memory. e.g, per how many pixels to print a character.
-
-			// int densityOfRow = 60;
-			// int density = 60;
+			String filePath = "src/main/resources/myFile.txt";
+			// Lower density values make the image more detailed, but require more space.
+			// D
 			for (int y = 0; y < image.getHeight(); y += verticalDensity) {
 				// Create a new line for each row of pixels.
 				myWriter.write("\n");
@@ -239,14 +163,7 @@ public class Writer {
 					System.out.println("User cancelled the operation.");
 				}
 
-				/*
-				 * System.out.println("File size in megabytesbytes: " + file.getTotalSpace());
-				 * System.out.println(Files.size(file.toPath()) + " bytes");
-				 * System.out.println(String.format("ASCII file size in bytes: %f ", bytes));
-				 * System.out.println(String.format("ASCII file size in kilobytes: %f", bytes /
-				 * 1024)); System.out.println(String.format("ASCII file size in megabytes: %f",
-				 * bytes / 1024 / 1024));
-				 */
+
 			}
 		} catch (IOException e) {
 			System.out.println("Error: " + e.getMessage());

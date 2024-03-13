@@ -4,9 +4,12 @@ import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.Optional;
@@ -101,6 +104,7 @@ public class Writer {
 				Color colorAtPixel = new Color(image.getRGB(x, y), true);
 				// If the sum of the red, green, and blue values of the pixel is greater than
 				// the threshold, set the pixel to white. Otherwise, set it to black.
+				// Threshold is completely arbitrary and can be set to any value.
 				if (colorAtPixel.getRed() + colorAtPixel.getGreen() + colorAtPixel.getBlue() > THRESHOLD) {
 					image.setRGB(x, y, Color.WHITE.getRGB());
 				} else {
@@ -115,16 +119,23 @@ public class Writer {
 
 
 	public static void writeAsciiImageToFile(BufferedImage image, int verticalDensity, int horizontalDensity) {
-		try {
-			// Instantiate a new file object and a file writer object.
-			File file = new File("src/main/resources/myFile.txt");
-			FileWriter myWriter = new FileWriter("src/main/resources/myFile.txt");
-			String filePath = "src/main/resources/myFile.txt";
-			// Lower density values make the image more detailed, but require more space.
-			// D
+
+		// Instantiate a new file object with the desired file path and the utf8
+		// charset.
+		Charset utf8 = Charset.forName("UTF-8");
+		File file = new File("src/main/resources/myFile.txt");
+		// Set the buffer size to 16kb. Dense prints can be quite large.
+		int bufferSize = 16 * 1024;
+		// Create a buffered writer that writes the characters to an OutputStreamwriter
+		// that transfers the characters to a into utf8 copmliant bytes and
+		// writes these bytes to the fileOutPutStream that writes to the file.
+
+		try (BufferedWriter buffWriter = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(file.getAbsolutePath()), utf8), bufferSize)) {
+
 			for (int y = 0; y < image.getHeight(); y += verticalDensity) {
 				// Create a new line for each row of pixels.
-				myWriter.write("\n");
+				buffWriter.newLine();
 				for (int x = 0; x < image.getWidth(); x += horizontalDensity) {
 					Color pixelColor = new Color(image.getRGB(x, y), true);
 					// Create a grayscale pixel using the luminosity method described here:
@@ -133,41 +144,22 @@ public class Writer {
 					double luminosityOfPixel = ((0.21 * pixelColor.getRed()) + (0.72 * pixelColor.getGreen())
 							+ (0.07 * pixelColor.getBlue())) / 255;
 					// Get the corresponding character for the luminosity value and write it to the
-					// myFile.txt.
-					myWriter.write(getAsciiCharacter(luminosityOfPixel));
+					// bufferered writer.
+					buffWriter.write(getAsciiCharacter(luminosityOfPixel));
 
 				}
 			}
 			System.out.println("Successfully wrote to the file.");
-			myWriter.close();
-			// Open the file in the default text editor.
-			if (!Desktop.isDesktopSupported()) {
-				System.out.println("Desktop is not supported");
-			}
-			Desktop desktop = Desktop.getDesktop();
+			// just to make sure the buffer is flushed and the file is closed.
+			buffWriter.close();
+			// Open the file if it exists.
+			openNewAsciiFileIfPresent(file);
 
-			if (file.exists()) {
-				double bytes = Files.size(file.toPath());
-				DecimalFormat f = new DecimalFormat("##.00");
-				Alert alert = new Alert(AlertType.CONFIRMATION);
-				alert.setTitle("File created");
-				alert.setHeaderText("An ASCII file was created at " + file.getAbsolutePath());
-				alert.setContentText("Do you want to open the file? \n\n" + "ASCII file size in bytes: " + bytes
-						+ " B \n" + "ASCII file size in kilobytes: " + f.format(bytes / 1024) + " KB \n"
-						+ "ASCII file size in megabytes: " + f.format(bytes / 1024 / 1024) + " MB \n");
-
-				Optional<ButtonType> result = alert.showAndWait();
-				if (result.get() == ButtonType.OK) {
-					desktop.open(file);
-				} else {
-					System.out.println("User cancelled the operation.");
-				}
-
-
-			}
-		} catch (IOException e) {
-			System.out.println("Error: " + e.getMessage());
+		} catch (IOException ioe) {
+			System.out.println("Printing to file failed: ");
+			ioe.printStackTrace();
 		}
+
 	}
 
 	public static void writeAsciiImageToConsole(BufferedImage image, int verticalDensity, int horizontalDensity) {
@@ -189,6 +181,62 @@ public class Writer {
 
 			}
 		}
+	}
+
+	public static void openNewAsciiFileIfPresent(File newAsciiFile) {
+		// Check that desktop is available and the file exists.
+		if (!Desktop.isDesktopSupported()) {
+			System.out.println("Desktop is not supported, cannot open file.");
+			return;
+		}
+		if (!newAsciiFile.exists()) {
+			System.out.println("File does not exist");
+			return;
+		}
+
+		try {
+			// Get the size of the file in bytes.
+			double bytes = Files.size(newAsciiFile.toPath());
+			showConfirmationAlert(newAsciiFile, bytes);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void openFile(File file) {
+		// Open the file with the default desktop application.
+		try {
+			Desktop desktop = Desktop.getDesktop();
+			desktop.open(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	};
+
+	private static void showConfirmationAlert(File newAsciiFile, double bytes) {
+		// Show a confirmation dialog that asks if the user wants to open the new ascii
+		// file.
+		// If the user clicks OK, the file will be opened.
+		// Also show the size of the file in bytes, kilobytes and megabytes, formatted
+		// to
+		// two decimal places.
+		DecimalFormat f = new DecimalFormat("##.00");
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("File created");
+		alert.setHeaderText("An ASCII file was created at " + newAsciiFile.getAbsolutePath());
+		alert.setContentText("Do you want to open the file? \n\n" + "ASCII file size in bytes: " + bytes + " B \n"
+				+ "ASCII file size in kilobytes: " + f.format(bytes / 1024) + " KB \n"
+				+ "ASCII file size in megabytes: " + f.format(bytes / 1024 / 1024) + " MB \n");
+		Optional<ButtonType> result = alert.showAndWait();
+		// If the user clicks OK, open the file.
+		// If the user clicks cancel, do nothing.
+		if (result.isPresent() && result.get() == ButtonType.OK) {
+			openFile(newAsciiFile);
+		} else {
+			System.out.println("User cancelled the operation.");
+		}
+
 	}
 
 	public static char getAsciiCharacter(double luminosityValue) {

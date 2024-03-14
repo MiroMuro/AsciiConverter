@@ -69,7 +69,7 @@ public class Writer {
 
 
 
-	public static BufferedImage transferImageToGreyScale(BufferedImage image) {
+	public static BufferedImage convertImageToGrayScale(BufferedImage image) {
 		// Loop through all the pixels in the image and convert them to grayscale.
 		for (int y = 0; y < image.getHeight(); y++) {
 			for (int x = 0; x < image.getWidth(); x++) {
@@ -119,6 +119,51 @@ public class Writer {
 
 
 	public static void writeAsciiImageToFile(BufferedImage image, int verticalDensity, int horizontalDensity) {
+		// Transfer the image to grayscale for more accurate ascii representation.
+		BufferedImage newImage = convertImageToGrayScale(image);
+		// Instantiate a new file object with the desired file path and the utf8
+		// charset.
+		Charset utf8 = Charset.forName("UTF-8");
+		File file = new File("src/main/resources/myFile.txt");
+		// Set the buffer size to 16kb. Dense prints can be quite large.
+		int bufferSize = 16 * 1024;
+		// Create a buffered writer that writes the characters to an OutputStreamwriter
+		// that transfers the characters to a into utf8 copmliant bytes and
+		// writes these bytes to the fileOutPutStream that writes to the file.
+
+		try (BufferedWriter buffWriter = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(file.getAbsolutePath()), utf8), bufferSize)) {
+
+			for (int y = 0; y < newImage.getHeight(); y += verticalDensity) {
+				// Create a new line for each row of pixels.
+				buffWriter.newLine();
+				for (int x = 0; x < newImage.getWidth(); x += horizontalDensity) {
+					Color pixelColor = new Color(newImage.getRGB(x, y), true);
+					// Create a grayscale pixel using the luminosity method described here:
+					// http://www.johndcook.com/blog/2009/08/24/algorithms-convert-color-grayscale/
+					// and get its luminosity value as an float between 0 and 1.
+					double luminosityOfPixel = ((0.21 * pixelColor.getRed()) + (0.72 * pixelColor.getGreen())
+							+ (0.07 * pixelColor.getBlue())) / 255;
+					// Get the corresponding character for the luminosity value and write it to the
+					// bufferered writer.
+					buffWriter.write(getAsciiCharacter(luminosityOfPixel));
+
+				}
+			}
+			System.out.println("Successfully wrote to the file.");
+			// just to make sure the buffer is flushed and the file is closed.
+			buffWriter.close();
+			// Open the file if it exists.
+			openNewAsciiFileIfPresent(file);
+
+		} catch (IOException ioe) {
+			System.out.println("Printing to file failed: ");
+			ioe.printStackTrace();
+		}
+
+	}
+
+	public static void writeAsciiEmojiImageToFile(BufferedImage image, int verticalDensity, int horizontalDensity) {
 
 		// Instantiate a new file object with the desired file path and the utf8
 		// charset.
@@ -145,7 +190,8 @@ public class Writer {
 							+ (0.07 * pixelColor.getBlue())) / 255;
 					// Get the corresponding character for the luminosity value and write it to the
 					// bufferered writer.
-					buffWriter.write(getAsciiCharacter(luminosityOfPixel));
+					String emoji = getEmojiCharacter(luminosityOfPixel);
+					buffWriter.write(emoji, 0, emoji.length());
 
 				}
 			}
@@ -241,35 +287,124 @@ public class Writer {
 
 	public static char getAsciiCharacter(double luminosityValue) {
 		// Get the corresponding character for the luminosity value.
-		// Darker values are represented by thicker characters and vice versa.
-		if (luminosityValue >= 0.9) {
+		// Darker values are represented by thicker characters as luminosityValue
+		// approaches 0.
+		if (luminosityValue >= 0.95) {
 			return '.';
 		}
-		if (luminosityValue >= 0.8) {
-			return '~';
-		}
-		if (luminosityValue >= 0.7) {
-			return 'z';
-		}
-		if (luminosityValue >= 0.6) {
-			return '<';
-		}
-		if (luminosityValue >= 0.5) {
-			return '§';
-		}
-		if (luminosityValue >= 0.4) {
+		if (luminosityValue >= 0.9) {
 			return '+';
 		}
-		if (luminosityValue >= 0.3) {
-			return '€';
+		if (luminosityValue >= 0.85) {
+			return ',';
 		}
-		if (luminosityValue >= 0.2) {
+		if (luminosityValue >= 0.8) {
+			return '"';
+		}
+		if (luminosityValue >= 0.75) {
+			return ':';
+		}
+		if (luminosityValue >= 0.7) {
+			return ';';
+		}
+		if (luminosityValue >= 0.65) {
+			return '?';
+		}
+		if (luminosityValue >= 0.6) {
+			return '!';
+		}
+		if (luminosityValue >= 0.55) {
+			return '^';
+		}
+		if (luminosityValue >= 0.5) {
+			return '`';
+		}
+		if (luminosityValue >= 0.45) {
+			return '\'';
+		}
+		if (luminosityValue >= 0.4) {
+			return ',';
+		}
+		if (luminosityValue >= 0.35) {
+			return '&';
+		}
+		if (luminosityValue >= 0.3) {
+			return '=';
+		}
+		if (luminosityValue >= 0.25) {
 			return '*';
 		}
-		if (luminosityValue >= 0.1) {
+		if (luminosityValue >= 0.2) {
 			return '#';
+		}
+		if (luminosityValue >= 0.15) {
+			return '~';
+		}
+		if (luminosityValue >= 0.1) {
+			return 'z';
+		}
+		if (luminosityValue >= 0.05) {
+			return '-';
 		}
 		return '@';
 	}
+
+	public static String getEmojiCharacter(double luminosityValue) {
+		if (luminosityValue >= 0.9) {
+			String s = "🚗";
+			return s;
+		}
+		if (luminosityValue >= 0.8) {
+			String s = "🚓";
+			return s;
+		}
+		if (luminosityValue >= 0.7) {
+			String s = "🚕";
+			return s;
+		}
+		if (luminosityValue >= 0.6) {
+			String s = "🚙";
+			return s;
+		}
+		if (luminosityValue >= 0.5) {
+			String s = "🚐";
+			return s;
+		}
+		if (luminosityValue >= 0.4) {
+			String s = "🚚";
+			return s;
+		}
+		if (luminosityValue >= 0.3) {
+			String s = "🚑";
+			return s;
+		}
+		if (luminosityValue >= 0.2) {
+			String s = "🚒";
+			return s;
+		}
+		if (luminosityValue >= 0.1) {
+			String s = "🚌";
+			return s;
+		}
+		if (luminosityValue <= 0.1 && luminosityValue >= 0.08) {
+			String s = "🚝";
+			return s;
+		}
+		if (luminosityValue <= 0.08 && luminosityValue >= 0.06) {
+			String s = "🚠";
+			return s;
+		}
+		if (luminosityValue <= 0.06 && luminosityValue >= 0.04) {
+			String s = "🚋";
+			return s;
+		}
+		if (luminosityValue <= 0.04 && luminosityValue >= 0.02) {
+			String s = "🚂";
+			return s;
+		}
+		String s = "🚎";
+		return s;
+	}
 }
+
 

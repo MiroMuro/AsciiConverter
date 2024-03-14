@@ -138,7 +138,7 @@ public class MainController {
 		if (currentImage == null) {
 			myMessage.setText("Error. No image loaded.");
 		} else {
-			BufferedImage img = Writer.transferImageToGreyScale(SwingFXUtils.fromFXImage(currentImage, null));
+			BufferedImage img = Writer.convertImageToGrayScale(SwingFXUtils.fromFXImage(currentImage, null));
 			// Then convert the grayscale bufferedImage back to an image and set it to the
 			// image view.
 			myImage.setImage(SwingFXUtils.toFXImage(img, null));
@@ -171,6 +171,17 @@ public class MainController {
 			// console.
 			BufferedImage image = SwingFXUtils.fromFXImage(currentImage, null);
 			Writer.writeAsciiImageToFile(image, (int) verticalDensitySlider.getValue(),
+					(int) horizontalDensitySlider.getValue());
+		}
+	}
+
+	@FXML
+	public void printAsciiEmojiImageToFile(ActionEvent event) {
+		if (currentImage == null) {
+			myMessage.setText("Error. No image loaded.");
+		} else {
+			BufferedImage image = SwingFXUtils.fromFXImage(currentImage, null);
+			Writer.writeAsciiEmojiImageToFile(image, (int) verticalDensitySlider.getValue(),
 					(int) horizontalDensitySlider.getValue());
 		}
 	}

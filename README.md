@@ -7,6 +7,7 @@ Clone the repo, let maven install all the dependices etc. and run App.java in As
 # Built with
 - GUI: JavaFX, Scenebuilder
 - Everything else: Java
+- a Maven project
 
 # TODO
 - Video, gif converting to ascii.

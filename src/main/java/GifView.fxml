@@ -9,7 +9,7 @@
    <children>
       <Label fx:id="testLabel" layoutX="198.0" layoutY="119.0" prefHeight="271.0" prefWidth="481.0" text="GIF VIEW ">
          <font>
-            <Font size="96.0" />
+            <Font size="37.0" />
          </font>
       </Label>
    </children>

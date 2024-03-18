@@ -31,6 +31,8 @@ public class MainController {
 	private Slider verticalDensitySlider;
 	@FXML
 	private Slider horizontalDensitySlider;
+	@FXML
+	private File GifFile;
 
 	public void initialize() {
 		// Initialize and add listeners to the sliders.
@@ -138,7 +140,7 @@ public class MainController {
 
 				// Input and output streams for file copying.
 				FileInputStream fis = new FileInputStream(file);
-				FileOutputStream fos = new FileOutputStream(file);
+				FileOutputStream fos = new FileOutputStream(destinationFilePath);
 				// Copy the file byte by byte.
 				byte[] buffer = new byte[1024];
 				int length;
@@ -147,13 +149,19 @@ public class MainController {
 				// the total number of bytes read into the buffer,
 				// or -1 if there is no more data because the end of the file has been reached.
 				while ((length = fis.read(buffer)) > 0) {
-					fos.write(buffer, length, length);
+					fos.write(buffer, 0, length);
 				}
 				fis.close();
 				fos.close();
 				System.out.println("File copied to: " + destinationFilePath);
 
 				File newFile = new File(destinationFilePath);
+				if (newFile.exists()) {
+					myMessage.setText("Gif file loaded succesfully.");
+				}
+				else {
+					System.out.println("File does not exist: " + newFile.getAbsolutePath());
+				}
 
 			}
 			catch (Exception e) {
@@ -231,10 +239,7 @@ public class MainController {
 		}
 	}
 
-	@FXML
-	public void test(ActionEvent event) {
-		System.out.println("Slider value test");
-	}
+
 
 	@FXML
 	public void openNewWindow(ActionEvent event) {

@@ -31,11 +31,10 @@ public class MainController {
 	private Slider verticalDensitySlider;
 	@FXML
 	private Slider horizontalDensitySlider;
-	@FXML
-	private File GifFile;
+
 
 	public void initialize() {
-		// Initialize and add listeners to the sliders.
+		// Initialize and add listeners to the ascii density value sliders.
 		verticalDensitySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 			System.out.println("Vertical Slider value changed: " + newValue);
 		});
@@ -100,13 +99,15 @@ public class MainController {
 				fis.close();
 				fos.close();
 				System.out.println("File copied to: " + destinationFilePath);
-
+				// If the image was copied succesfully, set it to the image view.
 				File newFile = new File(destinationFilePath);
 				if (newFile.exists()) {
 					myImage.setImage(new Image(newFile.toURI().toString()));
+					// Set the loaded image as the current image for further processing.
 					currentImage = myImage.getImage();
 					System.out.println("Curent image set to: " + currentImage.toString());
 				} else {
+					myMessage.setText("Error. Image file not loaded.");
 					System.out.println("File does not exist: " + newFile.getAbsolutePath());
 				}
 
@@ -154,12 +155,15 @@ public class MainController {
 				fis.close();
 				fos.close();
 				System.out.println("File copied to: " + destinationFilePath);
-
+				// If the gif was copeid succesfully, open it in a new window.
 				File newFile = new File(destinationFilePath);
 				if (newFile.exists()) {
 					myMessage.setText("Gif file loaded succesfully.");
+					openGifInNewWindow(new Image(newFile.toURI().toString()));
+
 				}
 				else {
+					myMessage.setText("Error. Gif file not loaded.");
 					System.out.println("File does not exist: " + newFile.getAbsolutePath());
 				}
 
@@ -220,8 +224,7 @@ public class MainController {
 			myMessage.setText("Error. No image loaded.");
 		} else {
 			// Transfer the current displayed image to a buffered image and then print it to
-			// the
-			// console.
+			// a file.
 			BufferedImage image = SwingFXUtils.fromFXImage(currentImage, null);
 			Writer.writeAsciiImageToFile(image, (int) verticalDensitySlider.getValue(),
 					(int) horizontalDensitySlider.getValue());
@@ -239,15 +242,15 @@ public class MainController {
 		}
 	}
 
-
-
-	@FXML
-	public void openNewWindow(ActionEvent event) {
+	public void openGifInNewWindow(Image gifPath) {
 		try {
+			// Load the GifView.fxml file that contains the layout of the gif viewer window.
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/GifView.fxml"));
 			Parent root1 = (Parent) fxmlLoader.load();
+			// Get the controller of the gif viewer window, and hand the gif to it.
 			GifController gifController = fxmlLoader.getController();
-			gifController.displayMessage(("This is a test message from another controller"));
+			gifController.displayGif(gifPath);
+			// Create a new window and display the gif.
 			Stage stage = new Stage();
 			stage.setTitle("Gif Viewer");
 			stage.setScene(new Scene(root1));

@@ -16,6 +16,8 @@ import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
+import com.madgag.gif.fmsware.GifDecoder;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -163,6 +165,51 @@ public class Writer {
 
 	}
 
+	public static void writeAsciiImageToFileNoOpeningPropmt(BufferedImage image, int verticalDensity,
+			int horizontalDensity) {
+		// Transfer the image to grayscale for more accurate ascii representation.
+		BufferedImage newImage = convertImageToGrayScale(image);
+		// Instantiate a new file object with the desired file path and the utf8
+		// charset.
+		Charset utf8 = Charset.forName("UTF-8");
+		File file = new File("src/main/resources/myFile.txt");
+		// Set the buffer size to 16kb. Dense prints can be quite large.
+		int bufferSize = 16 * 1024;
+		// Create a buffered writer that writes the characters to an OutputStreamwriter
+		// that transfers the characters to a into utf8 copmliant bytes and
+		// writes these bytes to the fileOutPutStream that writes to the file.
+
+		try (BufferedWriter buffWriter = new BufferedWriter(
+				new OutputStreamWriter(new FileOutputStream(file.getAbsolutePath()), utf8), bufferSize)) {
+
+			for (int y = 0; y < newImage.getHeight(); y += verticalDensity) {
+				// Create a new line for each row of pixels.
+				buffWriter.newLine();
+				for (int x = 0; x < newImage.getWidth(); x += horizontalDensity) {
+					Color pixelColor = new Color(newImage.getRGB(x, y), true);
+					// Create a grayscale pixel using the luminosity method described here:
+					// http://www.johndcook.com/blog/2009/08/24/algorithms-convert-color-grayscale/
+					// and get its luminosity value as an float between 0 and 1.
+					double luminosityOfPixel = ((0.21 * pixelColor.getRed()) + (0.72 * pixelColor.getGreen())
+							+ (0.07 * pixelColor.getBlue())) / 255;
+					// Get the corresponding character for the luminosity value and write it to the
+					// bufferered writer.
+					buffWriter.write(getAsciiCharacter(luminosityOfPixel));
+
+				}
+			}
+			System.out.println("Successfully wrote to the file.");
+			// just to make sure the buffer is flushed and the file is closed.
+			buffWriter.close();
+			// Open the file if it exists.
+
+		} catch (IOException ioe) {
+			System.out.println("Printing to file failed: ");
+			ioe.printStackTrace();
+		}
+
+	}
+
 	public static void writeAsciiEmojiImageToFile(BufferedImage image, int verticalDensity, int horizontalDensity) {
 
 		// Instantiate a new file object with the desired file path and the utf8
@@ -227,6 +274,17 @@ public class Writer {
 
 			}
 		}
+	}
+
+	public static void writeAsciiGifToFile() throws InterruptedException {
+		GifDecoder gifDecoder = new GifDecoder();
+		gifDecoder.read("src/main/resources/gifs/ds.gif");
+		int n = gifDecoder.getFrameCount();
+		System.out.println("Number of frames in the gif: " + n);
+		Charset utf8 = Charset.forName("UTF-8");
+		BufferedImage frame = gifDecoder.getFrame(0);
+		writeAsciiImageToFile(frame, 2, 1);
+
 	}
 
 	public static void openNewAsciiFileIfPresent(File newAsciiFile) {

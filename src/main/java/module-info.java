@@ -5,6 +5,7 @@ module AsciiWriter.Desktop {
 	requires javafx.base;
 	requires javafx.fxml;
 	requires javafx.swing;
+	requires animated.gif.lib;
 
 	opens AsciiWriter.Desktop to javafx.fxml;
 	opens AsciiWriter.Controllers to javafx.fxml;

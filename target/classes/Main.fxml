@@ -29,5 +29,7 @@
       <Button layoutX="71.0" layoutY="407.0" mnemonicParsing="false" onAction="#printAsciiEmojiImageToFile" text="Print ascii image with emojis to file" />
       <Label layoutX="33.0" layoutY="631.0" text="Most dense" />
       <Label layoutX="898.0" layoutY="631.0" text="Least dense" />
+      <Button layoutX="126.0" layoutY="496.0" mnemonicParsing="false" onAction="#singleGifChooser" text="Choose gif file" />
+      <Button layoutX="114.0" layoutY="554.0" mnemonicParsing="false" onAction="#openNewWindow" text="Open new window" />
    </children>
 </AnchorPane>

@@ -4,18 +4,21 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Random;
 
 import AsciiWriter.Writer.Writer;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 
 public class MainController {
 	@FXML
@@ -30,6 +33,7 @@ public class MainController {
 	private Slider horizontalDensitySlider;
 
 	public void initialize() {
+		// Initialize and add listeners to the sliders.
 		verticalDensitySlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 			System.out.println("Vertical Slider value changed: " + newValue);
 		});
@@ -38,13 +42,7 @@ public class MainController {
 		});
 	}
 
-	@FXML
-	public void generateRandom(ActionEvent event) {
-		Random random = new Random();
-		int myrand = random.nextInt(10) + 1;
-		myMessage.setText(Integer.toString(myrand));
-		// System.out.println(Integer.toString(myrand));
-	}
+
 
 	@FXML
 	public void loadExamplePhoto(ActionEvent event) {
@@ -119,6 +117,53 @@ public class MainController {
 	}
 
 	@FXML
+	public void singleGifChooser(ActionEvent event) {
+		FileChooser fc = new FileChooser();
+		// Add filter for gif files.
+		fc.getExtensionFilters().add(new ExtensionFilter("GIF files", "*.gif"));
+		// Show the file chooser dialog.
+		File file = fc.showOpenDialog(null);
+		// If a file is seleted, copy it to the resources folder.
+		if(file != null) {
+			try {
+				File destDir = new File("src/main/resources/gifs");
+				if(!destDir.exists()) {
+					destDir.mkdir();
+					System.out.println("Directory created: " + destDir.getAbsolutePath());
+				} else {
+					System.out.println("Directory already exists: " + destDir.getAbsolutePath());
+				}
+				// Define the destination file path
+				String destinationFilePath = destDir.getAbsolutePath() + File.separator + file.getName();
+
+				// Input and output streams for file copying.
+				FileInputStream fis = new FileInputStream(file);
+				FileOutputStream fos = new FileOutputStream(file);
+				// Copy the file byte by byte.
+				byte[] buffer = new byte[1024];
+				int length;
+				// Reads up to buffer.length bytes of data from this inputstream into an array
+				// of bytes.
+				// the total number of bytes read into the buffer,
+				// or -1 if there is no more data because the end of the file has been reached.
+				while ((length = fis.read(buffer)) > 0) {
+					fos.write(buffer, length, length);
+				}
+				fis.close();
+				fos.close();
+				System.out.println("File copied to: " + destinationFilePath);
+
+				File newFile = new File(destinationFilePath);
+
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	@FXML
 	public void convertImageToMonohrome(ActionEvent event) {
 		// Convert the current image to BufferedImage and then to monochrome.
 		// Then convert the monochrome bufferedImage back to an image and set it to the
@@ -190,6 +235,23 @@ public class MainController {
 	public void test(ActionEvent event) {
 		System.out.println("Slider value test");
 	}
+
+	@FXML
+	public void openNewWindow(ActionEvent event) {
+		try {
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/GifView.fxml"));
+			Parent root1 = (Parent) fxmlLoader.load();
+			GifController gifController = fxmlLoader.getController();
+			gifController.displayMessage(("This is a test message from another controller"));
+			Stage stage = new Stage();
+			stage.setTitle("Gif Viewer");
+			stage.setScene(new Scene(root1));
+			stage.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	};
 
 
 };

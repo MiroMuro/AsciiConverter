@@ -407,6 +407,70 @@ public class Writer {
 		return '@';
 	}
 
+	public static String getAsciiCharacterAsString(double luminosityValue) {
+		// Get the corresponding character for the luminosity value.
+		// Darker values are represented by thicker characters as luminosityValue
+		// approaches 0.
+		if (luminosityValue >= 0.95) {
+			return ".";
+		}
+		if (luminosityValue >= 0.9) {
+			return "+";
+		}
+		if (luminosityValue >= 0.85) {
+			return ",";
+		}
+		if (luminosityValue >= 0.8) {
+			return "\"";
+		}
+		if (luminosityValue >= 0.75) {
+			return ":";
+		}
+		if (luminosityValue >= 0.7) {
+			return ";";
+		}
+		if (luminosityValue >= 0.65) {
+			return "?";
+		}
+		if (luminosityValue >= 0.6) {
+			return "!";
+		}
+		if (luminosityValue >= 0.55) {
+			return "^";
+		}
+		if (luminosityValue >= 0.5) {
+			return "`";
+		}
+		if (luminosityValue >= 0.45) {
+			return "/";
+		}
+		if (luminosityValue >= 0.4) {
+			return ",";
+		}
+		if (luminosityValue >= 0.35) {
+			return "&";
+		}
+		if (luminosityValue >= 0.3) {
+			return "=";
+		}
+		if (luminosityValue >= 0.25) {
+			return "*";
+		}
+		if (luminosityValue >= 0.2) {
+			return "#";
+		}
+		if (luminosityValue >= 0.15) {
+			return "~";
+		}
+		if (luminosityValue >= 0.1) {
+			return "z";
+		}
+		if (luminosityValue >= 0.05) {
+			return "-";
+		}
+		return "2@";
+	}
+
 	public static String getEmojiCharacter(double luminosityValue) {
 		if (luminosityValue >= 0.9) {
 			String s = "🚗";

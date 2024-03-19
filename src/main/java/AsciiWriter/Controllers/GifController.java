@@ -1,10 +1,16 @@
 package AsciiWriter.Controllers;
 
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+import com.madgag.gif.fmsware.GifDecoder;
 
 import AsciiWriter.Writer.Writer;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -17,9 +23,11 @@ public class GifController {
 	@FXML
 	private ImageView gifView;
 	@FXML
-	private TextArea gifTextArea;
+	public TextArea gifTextArea;
 	@FXML
 	private Button gifButton;
+	@FXML
+	public int frameIndex = 0;
 	private boolean flag = false;
 	public void displayGif(Image gif) throws InterruptedException {
 		gifView.setImage(gif);
@@ -27,54 +35,71 @@ public class GifController {
 
 	}
 
+
+
 	@FXML
-	public void setAids(ActionEvent event) throws InterruptedException {
-		/*GifDecoder gifDecoder = new GifDecoder();
-		gifDecoder.read("src/main/resources/gifs/ds.gif");
-		int n = gifDecoder.getFrameCount();
-		System.out.println("Number of frames in the gif: " + n);
-		Charset utf8 = Charset.forName("UTF-8");
-		// BufferedImage frame = gifDecoder.getFrame(0);
+	public void startPainting() throws InterruptedException {
 
-		for (int i = 0; i < n; i++) {
-			Thread.sleep(100);
-			BufferedImage frame = gifDecoder.getFrame(i);
-			Writer.writeAsciiImageToFileNoOpeningPropmt(frame, 2, 1);
-
-			try {
-				File myObj = new File("src/main/resources/myFile.txt");
-				Scanner myReader = new Scanner(myObj);
-				while (myReader.hasNextLine()) {
-					String data = myReader.nextLine();
-					gifTextArea.appendText(data + "\n");
-				}
-				myReader.close();
-				gifTextArea.clear();
-			} catch (FileNotFoundException e) {
-				System.out.println("An error occurred.");
-				e.printStackTrace();
-			}
-
-		}*/
-		TimerTask task = new TimerTask() {
-
+		Task<Void> task = new Task<Void>() {
 			@Override
-			public void run() {
-				gifTextArea.appendText("Hello World");
+			protected Void call() throws Exception {
+				// TODO Auto-generated method stub
+				GifDecoder gifDecoder = new GifDecoder();
+				gifDecoder.read("src/main/resources/gifs/ds.gif");
+				int n = gifDecoder.getFrameCount();
+				while (frameIndex <= n) {
+					gifTextArea.clear();
+					Thread.sleep(100);
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							BufferedImage frame = gifDecoder.getFrame(frameIndex);
+							Writer.writeAsciiImageToFileNoOpeningPropmt(frame, 2, 1);
+							try {
+								File myObj = new File("src/main/resources/myFile.txt");
+								Scanner myReader = new Scanner(myObj);
+
+								while (myReader.hasNextLine()) {
+									String data = myReader.nextLine();
+									gifTextArea.appendText(data + "\n");
+								}
+								myReader.close();
+
+							} catch (FileNotFoundException e) {
+								System.out.println("An error occurred.");
+								e.printStackTrace();
+							}
+							frameIndex++;
+
+						}
+					});
+				}
+				return null;
 			}
 
 		};
-		Timer timer = new Timer();
-		long delay = 300L;
+		new Thread(task).start();
+
+	};
 
 
-		timer.schedule(task, delay, 50);
-
-
-
-	}
 
 	public void stopAids(ActionEvent event) {
 		flag = true;
+		/*
+		 * if (frameIndex <= n) { gifTextArea.clear(); BufferedImage frame =
+		 * gifDecoder.getFrame(frameIndex);
+		 * Writer.writeAsciiImageToFileNoOpeningPropmt(frame, 2, 1); try { File myObj =
+		 * new File("src/main/resources/myFile.txt"); Scanner myReader = new
+		 * Scanner(myObj);
+		 *
+		 * while (myReader.hasNextLine()) { String data = myReader.nextLine();
+		 * gifTextArea.appendText(data + "\n"); } myReader.close();
+		 *
+		 * } catch (FileNotFoundException e) { System.out.println("An error occurred.");
+		 * e.printStackTrace(); } frameIndex++; } else {
+		 *
+		 * }
+		 */
 	}
 }

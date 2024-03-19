@@ -41,15 +41,17 @@ public class GifController {
 	public void startPainting() throws InterruptedException {
 
 		Task<Void> task = new Task<Void>() {
+
 			@Override
+
 			protected Void call() throws Exception {
+
 				// TODO Auto-generated method stub
 				GifDecoder gifDecoder = new GifDecoder();
 				gifDecoder.read("src/main/resources/gifs/ds.gif");
 				int n = gifDecoder.getFrameCount();
-				while (frameIndex <= n) {
-					gifTextArea.clear();
-					Thread.sleep(100);
+				while (frameIndex < n - 1) {
+					System.out.println(frameIndex + " " + n);
 					Platform.runLater(new Runnable() {
 						@Override
 						public void run() {
@@ -73,7 +75,10 @@ public class GifController {
 
 						}
 					});
+					Thread.sleep(100);
+					gifTextArea.clear();
 				}
+
 				return null;
 			}
 

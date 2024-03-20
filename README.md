@@ -1,8 +1,3 @@
-# IMAGE TO ASCII CONVERTER
-An lightweight and fast application for Ascii image and gif creation!
-
-# HOW TO RUN
-Clone the repo, let maven install all the dependices etc. and run App.java in AsciiWriter.Desktop.
 
 
 # IMAGE & GIF TO ASCII CONVERTER
@@ -46,10 +41,10 @@ Clone the repo using the repo link. Maven will take care of everything else.
 ## Help
 
 Setting the playback speed below 50 can freeze and slow the app down heavily.
+If the gif/images seems to be printing oddly at first, try playing around with the sliders a bit.
 
 ## Authors
 
-Contributors names and contact info
 
 Miro Laukkanen
 miro.laukkanen44@gmail.com

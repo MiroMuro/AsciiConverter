@@ -159,7 +159,7 @@ public class MainController {
 				File newFile = new File(destinationFilePath);
 				if (newFile.exists()) {
 					myMessage.setText("Gif file loaded succesfully.");
-					openGifInNewWindow(new Image(newFile.toURI().toString()));
+					openGifInNewWindow(new Image(newFile.toURI().toString()), newFile.getName());
 
 				}
 				else {
@@ -242,14 +242,14 @@ public class MainController {
 		}
 	}
 
-	public void openGifInNewWindow(Image gifPath) {
+	public void openGifInNewWindow(Image gif, String gifPath) {
 		try {
 			// Load the GifView.fxml file that contains the layout of the gif viewer window.
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/GifView.fxml"));
 			Parent root1 = (Parent) fxmlLoader.load();
 			// Get the controller of the gif viewer window, and hand the gif to it.
 			GifController gifController = fxmlLoader.getController();
-			gifController.displayGif(gifPath);
+			gifController.displayGif(gif, gifPath);
 			// Create a new window and display the gif.
 			Stage stage = new Stage();
 			stage.setTitle("Gif Viewer");

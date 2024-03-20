@@ -276,14 +276,14 @@ public class Writer {
 		}
 	}
 
-	public static void writeAsciiGifToFile() throws InterruptedException {
+	public static void writeAsciiGifToFile(String filename) throws InterruptedException {
 		GifDecoder gifDecoder = new GifDecoder();
-		gifDecoder.read("src/main/resources/gifs/ds.gif");
+		gifDecoder.read("src/main/resources/gifs/" + filename);
 		int n = gifDecoder.getFrameCount();
 		System.out.println("Number of frames in the gif: " + n);
 		Charset utf8 = Charset.forName("UTF-8");
 		BufferedImage frame = gifDecoder.getFrame(0);
-		writeAsciiImageToFile(frame, 2, 1);
+		writeAsciiImageToFile(frame, 3, 3);
 
 	}
 

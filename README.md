@@ -18,6 +18,7 @@ The final form of the ASCII artworks can be altered with various sliders in the 
 
 ## DEMO VIDEO
 - Github 10MB upload limit restricts me so heres an youtube link. 😤😪😁
+https://www.youtube.com/watch?v=93RfXAXWRLs
 
 
 ## Getting Started
@@ -40,9 +41,8 @@ Clone the repo using the repo link. Maven will take care of everything else.
 - Maven
 
 # TODO
-- Test cases.
+- Testing
 
-https://www.youtube.com/watch?v=93RfXAXWRLs
 ## Help
 
 Setting the playback speed below 50 can freeze and slow the app down heavily.

@@ -52,6 +52,8 @@ public class GifController {
 			System.out.println("Playback Speed Slider value changed: " + newValue);
 		});
 		fontSizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			gifTextArea.setStyle("-fx-font-size: " + newValue + "px;");
+			System.out.println(gifTextArea.getStyle());
 			System.out.println("Font Size Slider value changed: " + newValue);
 		});
 
@@ -67,8 +69,10 @@ public class GifController {
 		// Thread.sleep(25); = 40 frames per second.
 	}
 
+	@FXML
 	public void setFontSize(int fontSize) {
 		gifTextArea.setStyle("-fx-font-size: " + fontSize + "px;");
+		System.out.println(gifTextArea.getStyle());
 	}
 	public void displayGif(Image gif, String gifName) throws InterruptedException {
 		gifView.setImage(gif);

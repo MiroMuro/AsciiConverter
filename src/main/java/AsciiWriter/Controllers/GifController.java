@@ -3,7 +3,9 @@ package AsciiWriter.Controllers;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.Scanner;
 
 import com.madgag.gif.fmsware.GifDecoder;
@@ -18,6 +20,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class GifController {
 
@@ -71,6 +75,60 @@ public class GifController {
 		fileName = gifName;
 
 	}
+	@FXML
+	public void selectNewGif(ActionEvent event) {
+		flag = false;
+		FileChooser fc = new FileChooser();
+		// Add filter for gif files.
+		fc.getExtensionFilters().add(new ExtensionFilter("GIF files", "*.gif"));
+		// Show the file chooser dialog.
+		File file = fc.showOpenDialog(null);
+		// If a file is seleted, copy it to the resources folder.
+		if (file != null) {
+			try {
+				File destDir = new File("src/main/resources/gifs");
+				if (!destDir.exists()) {
+					destDir.mkdir();
+					System.out.println("Directory created: " + destDir.getAbsolutePath());
+				} else {
+					System.out.println("Directory already exists: " + destDir.getAbsolutePath());
+				}
+				// Define the destination file path
+				String destinationFilePath = destDir.getAbsolutePath() + File.separator + file.getName();
+
+				// Input and output streams for file copying.
+				FileInputStream fis = new FileInputStream(file);
+				FileOutputStream fos = new FileOutputStream(destinationFilePath);
+				// Copy the file byte by byte.
+				byte[] buffer = new byte[1024];
+				int length;
+				// Reads up to buffer.length bytes of data from this inputstream into an array
+				// of bytes.
+				// the total number of bytes read into the buffer,
+				// or -1 if there is no more data because the end of the file has been reached.
+				while ((length = fis.read(buffer)) > 0) {
+					fos.write(buffer, 0, length);
+				}
+				fis.close();
+				fos.close();
+				System.out.println("File copied to: " + destinationFilePath);
+				// If the gif was copeid succesfully, open it in a new window.
+				File newFile = new File(destinationFilePath);
+				if (newFile.exists()) {
+					System.out.println("Gif file loaded succesfully.");
+					displayGif(new Image(newFile.toURI().toString()), newFile.getName());
+
+				} else {
+
+					System.out.println("File does not exist: " + newFile.getAbsolutePath());
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	@FXML
 	public void paintGifToAscii(ActionEvent event) throws InterruptedException {
 		flag = true;
@@ -148,54 +206,5 @@ public class GifController {
 		flag = false;
 
 	}
-	/*
-	 * @FXML public void startPainting() throws InterruptedException { // Create a
-	 * new Task (that runs on separate thread from the JavaFX) to handle // the gif
-	 * painting. // The GUI must be updated in the JavaFX Application Thread, and //
-	 * In this case, that thread is accessed through the Platform.runLater method.
-	 * Task<Void> task = new Task<Void>() { // The interval between frame rendering
-	 * is handled by // Thread.sleep(playbackSpeed). // But we cannot sleep the
-	 * JavaFX Application Thread or else the app will // freeze, so we use a Task //
-	 * to encapsulate the Platform.runLater method, and sleep the Task thread //
-	 * instead. This ensures that the gif renders, unrenders and the GUI is updated
-	 * // at the same time.
-	 *
-	 * @Override protected Void call() throws Exception { flag = true; GifDecoder
-	 * gifDecoder = new GifDecoder(); gifDecoder.read("src/main/resources/gifs/" +
-	 * fileName); int n = gifDecoder.getFrameCount(); int playbackSpeed = (int)
-	 * playbackSpeedSlider.getValue(); int verticalDensity = (int)
-	 * verticalDensitySlider.getValue(); int horizontalDensity = (int)
-	 * horizontalDensitySlider.getValue(); while (flag) { frameIndex = 0; // This
-	 * while loop writes the gif as ascii art to the gifTextArea. while (frameIndex
-	 * < n - 1) { System.out.println(frameIndex + " " + n); // This updates the GUI
-	 * in the JavaFX Application Thread. Platform.runLater(new Runnable() {
-	 *
-	 * @Override public void run() { BufferedImage frame =
-	 * gifDecoder.getFrame(frameIndex);
-	 * Writer.writeAsciiImageToFileNoOpeningPropmt(frame, verticalDensity,
-	 * horizontalDensity); try { File myObj = new
-	 * File("src/main/resources/myFile.txt"); Scanner myReader = new Scanner(myObj);
-	 *
-	 * while (myReader.hasNextLine()) { String data = myReader.nextLine();
-	 * gifTextArea.appendText(data + "\n"); } myReader.close();
-	 *
-	 * } catch (FileNotFoundException e) { System.out.println("An error occurred.");
-	 * e.printStackTrace(); } frameIndex++;
-	 *
-	 * } }); // This sleeps the Task thread, not the JavaFX Application Thread.
-	 * Thread.sleep(playbackSpeed); // Clear the screen for the next frame. As an
-	 * GUI update must be handled in the // JavaFX Application Thread, which
-	 * PlatForm.runLater uses. Platform.runLater(new Runnable() {
-	 *
-	 * @Override public void run() { gifTextArea.clear(); } }); } }
-	 *
-	 *
-	 * return null; }
-	 *
-	 * }; new Thread(task).start();
-	 *
-	 *
-	 * };
-	 */
 
 }
